@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% from "macro.html" import navbar with context %}
+{% block title %}文章 {% endblock %}
+{% block head %}
+<link rel="stylesheet" href="http://7xjm5v.com1.z0.glb.clouddn.com/@/font-awesome-4.3.0/css/font-awesome.min.css">
+{{ pagedown.html_head() }}
+    {{ super() }}
+    <style>
+        {% include "snipple/footer.css" %}
+        a{
+        }
+        #title{
+            line-height: 35px;
+        }
+        .post{
+            list-style-type: none;
+        }
+        .post-body{
+            font-weight: normal;
+            font-size: 16px;
+        }
+        .label-default{
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            color: #333;
+        }
+        #pub_time{
+            margin-top: 5px;
+        }
+    </style>
+{% endblock %}
+{% block nav %}
+    {{ navbar() }}
+{% endblock %}
+{% block content %}
+    <div class='container'>
+    <div class='row'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+    <ul class="posts">
+        <li class="post">
+            <div class="head">
+                <a href="{{ url_for('main.article', id=content.id)}}"><h2 id="title">{{ content.title }}</h2></a>
+                <div id="pub_time">{{ content.pub_time.strftime('%Y %m %d') }}</div>
+            </div>
+            <hr>
+            <div class="post-body">
+                    {{ content.body_html | safe }}
+            </div>
+            <span class="glyphicon glyphicon-tags"></span> &nbsp;&nbsp;
+            <span class="label label-default"><a>{{ content.category }}</a></span>
+        </li>
+    </ul>
+    <hr>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'flaskblog';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+    </div>
+    <div class='col-md-2'></div>
+    </div>
+    </div>
+
+
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES * * */
+        var disqus_shortname = 'flaskblog';
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function () {
+            var s = document.createElement('script'); s.async = true;
+            s.type = 'text/javascript';
+            s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+        }());
+    </script>
+
+{% endblock %}
+{% block footer %}
+{% include "snipple/footer.html" %}
+{% endblock %}

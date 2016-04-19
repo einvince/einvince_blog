@@ -1,0 +1,124 @@
+#-*- coding: UTF-8 -*- 
+from . import main
+from .. import db
+from flask import render_template, redirect, url_for, abort, flash, request,current_app
+from flask.ext.login import login_required
+from flask.ext.login import login_user, logout_user
+from .forms import LoginForm, RegisterForm, PostArticle
+from ..models import Content, User
+import markdown2
+
+
+
+
+@main.route('/', methods=['GET', 'POST'])
+def index():
+    page = request.args.get('page', 1, type=int)
+    pagination = Content.query.order_by(Content.pub_time.desc()).paginate(page, per_page=10, error_out=True)
+    contents = pagination.items
+    return render_template('index.html', contents=contents, pagination=pagination)
+
+
+@main.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user is not None and user.verify_password(form.password.data):
+            login_user(user)
+            return redirect(request.args.get('next') or url_for('main.index'))
+        else:
+            flash('邮箱或者密码不正确')
+    return render_template('login.html', form=form)
+
+
+@main.route('/logout', methods=['GET', 'POST'])
+@login_required
+def logout():
+    logout_user()
+    flash('你已退出登录')
+    return redirect(url_for('main.index'))
+
+
+@main.route('/post-article', methods=['GET', 'POST'])
+@login_required
+def post_article():
+    form = PostArticle()
+    if form.validate_on_submit():
+        content = Content(title=form.title.data,
+                          body=form.body.data,
+                          category=form.category.data,
+                          abstract=form.abstract.data,
+                          pub_time=form.pub_time.data,
+                          body_html=markdown2.markdown(form.body.data)
+                          )
+        db.session.add(content)
+        db.session.commit()
+        return redirect(url_for('main.index'))
+    return render_template('post-article.html', form=form)
+
+
+@main.route('/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit(id):
+    content = Content.query.get_or_404(id)
+    form = PostArticle()
+    if form.validate_on_submit():
+        # 这段写的好丑。。。不知道有什么优雅的方法。。。
+        content.title = form.title.data
+        content.body = form.body.data
+        content.abstract = form.abstract.data
+        content.body_html = markdown(form.body.data)
+        content.category = form.category.data
+        content.pub_time = form.pub_time.data
+        db.session.commit()
+        flash('你已经更新')
+        return redirect(url_for('main.index'))
+    form.body.data = content.body
+    form.title.data = content.title
+    form.abstract.data = content.abstract
+    form.category.data = content.category
+    form.pub_time.data = content.pub_time
+
+
+    return render_template('post-article.html', form=form)
+
+
+@main.route('/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete(id):
+    content = Content.query.get_or_404(id)
+    if content is None:
+        flash('文章不存在')
+        return redirect(f_for('index'))
+    db.session.delete(content)
+    db.session.commit()
+    flash('已删除该文章')
+    return redirect(url_for('main.index'))
+
+@main.route('/article/<int:id>',methods=['GET', 'POST'])
+def article(id):
+    content = Content.query.get_or_404(id)
+    return render_template('article.html', content=content)
+
+
+@main.route('/admin.html', methods=['GET', 'POST'])
+@login_required
+def admin():
+    contents = Content.query.order_by(Content.pub_time.desc()).all()
+    return render_template('admin.html', contents=contents)
+
+@main.route('/resume',methods=['GET', 'POST'])
+def resume():
+    return send_from_directory("static", "resume.pdf")
+
+@main.route('/search/<keyword>', methods=['GET'])
+def search(keyword):
+    return redirect('http://www.google.com/search?q=site:' + config.site_url + ' ' + keyword)
+
+
+'''
+@main.route('/resume')
+def resume():
+    return render_template('resume.html')
+'''

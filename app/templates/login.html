@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% from "macro.html" import navbar with context %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block head %}
+    {{ super() }}
+    <style>
+        .container-center{
+            margin-top: 100px;
+            max-width: 400px;
+        }
+    </style>
+{% endblock %}
+{% block nav %}
+    {{navbar('login')}}
+{% endblock %}
+
+{% block content %}
+    <div class="container container-center">
+    {{ wtf.quick_form(form) }}
+    <br />
+    </div>
+    <div id="turn-to-register">
+    </div>
+{% endblock %}

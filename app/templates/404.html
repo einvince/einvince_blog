@@ -1,0 +1,27 @@
+{% extends "index.html" %}
+{% from "macro.html" import pagination_widget, navbar  with context %}
+{% block title %}404 not found {% endblock %}
+{% block head %}
+    {{ super() }}
+       <style type="text/css">
+#funder{
+    color:palevioletred;
+    font-style:italic;
+    text-align:center
+}
+       </style>
+{% endblock %}
+
+{% block nav %}
+    {{ navbar() }}
+{% endblock %}
+
+{% block content %}
+    <div id="funder">
+    4014 not found
+    </div>
+{% endblock %}
+
+{% block footer %}
+{% include "snipple/footer.html" %}
+{% endblock %}
