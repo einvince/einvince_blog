@@ -3,6 +3,7 @@
     <head>
         {% block head %}
         <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/bootstrap.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/base.css') }}">
         <!--title-->
         <title>{% block title %}{% endblock %}</title>
         {% endblock %}
@@ -23,9 +24,9 @@
         </div>
         {% block content %}{% endblock %}
         <!--footer-->
-        <div id="footer">
+
           {% block footer %}
           {% endblock %}
-        </div>
+
     </body>
 </html>

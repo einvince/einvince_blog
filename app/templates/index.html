@@ -39,6 +39,15 @@
         .pagination{
             margin-top: 0;
         }
+       #category{
+           float: left;
+       }
+        #ca_ca{
+           margin: 10px;
+       }
+        #foot-mar{
+           margin-bottom: 100px;
+       }
     </style>
 {{ pagedown.html_head() }}
 {% endblock %}
@@ -48,7 +57,7 @@
 {% endblock %}
 <!--content-->
 {% block content %}
-<div class="container">
+<div class="container" >
     <div class='row'>
     <div class='col-md-3'></div>
     <div class='col-md-6'>
@@ -67,11 +76,18 @@
         {% endfor %}
     </ul>
     </div>
-    <div class='col-md-3'></div>
+    <div class='col-md-3'>
+    {% for content in contents %}
+        <div id="ca_ca">
+        <span id="category" class="glyphicon glyphicon-tags"></span>
+        <li style="list-style-type:none;">&nbsp;&nbsp{{ content.category }}</li>
+        </div>
+     {% endfor %}
+    </div>
     </div>
 </div>
 
-<div class="container">
+<div class="container" id="foot-mar">
     <div class="row">
         <div class="col-md-3"></div>
         <div class="col-md-6">

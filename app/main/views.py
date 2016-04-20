@@ -1,35 +1,41 @@
-#-*- coding: UTF-8 -*- 
+# -*- coding: UTF-8 -*-
 from . import main
 from .. import db
 from flask import render_template, redirect, url_for, abort, flash, request,current_app
-from flask.ext.login import login_required
-from flask.ext.login import login_user, logout_user
+from flask.ext.login import login_required, current_user
 from .forms import LoginForm, RegisterForm, PostArticle
 from ..models import Content, User
 import markdown2
+from misaka import Markdown, HtmlRenderer
 
-
-
-
+# 定义路由
 @main.route('/', methods=['GET', 'POST'])
 def index():
     page = request.args.get('page', 1, type=int)
-    pagination = Content.query.order_by(Content.pub_time.desc()).paginate(page, per_page=10, error_out=True)
+    pagination = Content.query.order_by(Content.pub_time.desc()).paginate(
+        page, per_page=10, error_out=False)
     contents = pagination.items
+    # contents = Content.query.order_by(Content.pub_time.desc()).all()
+
     return render_template('index.html', contents=contents, pagination=pagination)
 
 
 @main.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    email = None
+    password = None
+    remember_me = None
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user is not None and user.verify_password(form.password.data):
-            login_user(user)
-            return redirect(request.args.get('next') or url_for('main.index'))
+            login_user(user, form.remember_me.data)
+            return redirect(request.args.get('next') or url_for('index'))
         else:
             flash('邮箱或者密码不正确')
-    return render_template('login.html', form=form)
+        #flash('电子邮箱或密码不正确')
+    form.email.data = ''
+    return render_template('login.html', form=form, email=email, password=password, remember_me=remember_me)
 
 
 @main.route('/logout', methods=['GET', 'POST'])
@@ -37,7 +43,7 @@ def login():
 def logout():
     logout_user()
     flash('你已退出登录')
-    return redirect(url_for('main.index'))
+    return redirect(url_for('index'))
 
 
 @main.route('/post-article', methods=['GET', 'POST'])
@@ -49,12 +55,10 @@ def post_article():
                           body=form.body.data,
                           category=form.category.data,
                           abstract=form.abstract.data,
-                          pub_time=form.pub_time.data,
-                          body_html=markdown2.markdown(form.body.data)
-                          )
+                          pub_time=form.pub_time.data,)
         db.session.add(content)
         db.session.commit()
-        return redirect(url_for('main.index'))
+        return redirect(url_for('.index'))
     return render_template('post-article.html', form=form)
 
 
@@ -64,23 +68,19 @@ def edit(id):
     content = Content.query.get_or_404(id)
     form = PostArticle()
     if form.validate_on_submit():
-        # 这段写的好丑。。。不知道有什么优雅的方法。。。
         content.title = form.title.data
         content.body = form.body.data
         content.abstract = form.abstract.data
-        content.body_html = markdown(form.body.data)
         content.category = form.category.data
         content.pub_time = form.pub_time.data
         db.session.commit()
         flash('你已经更新')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('index'))
     form.body.data = content.body
     form.title.data = content.title
     form.abstract.data = content.abstract
     form.category.data = content.category
     form.pub_time.data = content.pub_time
-
-
     return render_template('post-article.html', form=form)
 
 
@@ -90,17 +90,21 @@ def delete(id):
     content = Content.query.get_or_404(id)
     if content is None:
         flash('文章不存在')
-        return redirect(f_for('index'))
+        return redirect(url_for('index'))
     db.session.delete(content)
     db.session.commit()
     flash('已删除该文章')
-    return redirect(url_for('main.index'))
+    return redirect(url_for('admin.html'))
 
-@main.route('/article/<int:id>',methods=['GET', 'POST'])
+@main.route('/article/<int:id>')
 def article(id):
     content = Content.query.get_or_404(id)
     return render_template('article.html', content=content)
 
+@main.route('/category/<name>')
+def category(name):
+    categorys = Content.query.filter_by(category=name).all()
+    return render_template('category.html', categorys=categorys,)
 
 @main.route('/admin.html', methods=['GET', 'POST'])
 @login_required
@@ -108,7 +112,7 @@ def admin():
     contents = Content.query.order_by(Content.pub_time.desc()).all()
     return render_template('admin.html', contents=contents)
 
-@main.route('/resume',methods=['GET', 'POST'])
+@main.route('/resume')
 def resume():
     return send_from_directory("static", "resume.pdf")
 

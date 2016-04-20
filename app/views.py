@@ -2,28 +2,25 @@
 from . import main
 from .. import db
 from flask import render_template, redirect, url_for, abort, flash, request,current_app
-
 from flask.ext.login import login_required, current_user
-#from flask.ext.login import UserMixin, LoginManager, login_required, login_user, logout_user
-
 from .forms import LoginForm, RegisterForm, PostArticle
-
 from ..models import Content, User, Role
-
+import markdown2
+from misaka import Markdown, HtmlRenderer
 
 # 定义路由
 @main.route('/', methods=['GET', 'POST'])
 def index():
     page = request.args.get('page', 1, type=int)
     pagination = Content.query.order_by(Content.pub_time.desc()).paginate(
-        page, per_page=10, error_out=False
-    )
+        page, per_page=10, error_out=False)
     contents = pagination.items
     # contents = Content.query.order_by(Content.pub_time.desc()).all()
+
     return render_template('index.html', contents=contents, pagination=pagination)
 
 
-@main.route('/login.html', methods=['GET', 'POST'])
+@main.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     email = None
@@ -41,7 +38,7 @@ def login():
     return render_template('login.html', form=form, email=email, password=password, remember_me=remember_me)
 
 
-@main.route('/logout.html', methods=['GET', 'POST'])
+@main.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
@@ -49,19 +46,16 @@ def logout():
     return redirect(url_for('index'))
 
 
-@main.route('/post-article.html', methods=['GET', 'POST'])
+@main.route('/post-article', methods=['GET', 'POST'])
 @login_required
 def post_article():
     form = PostArticle()
     if form.validate_on_submit():
-        # title = form.title.data
-        # body = form.body.data
         content = Content(title=form.title.data,
                           body=form.body.data,
                           category=form.category.data,
                           abstract=form.abstract.data,
-                          pub_time=form.pub_time.data,
-                          body_html=markdown(form.body.data))
+                          pub_time=form.pub_time.data,))
         db.session.add(content)
         db.session.commit()
         return redirect(url_for('.index'))
@@ -74,11 +68,9 @@ def edit(id):
     content = Content.query.get_or_404(id)
     form = PostArticle()
     if form.validate_on_submit():
-        # 这段写的好丑。。。不知道有什么优雅的方法。。。
         content.title = form.title.data
         content.body = form.body.data
         content.abstract = form.abstract.data
-        content.body_html = markdown(form.body.data)
         content.category = form.category.data
         content.pub_time = form.pub_time.data
         db.session.commit()
@@ -89,8 +81,6 @@ def edit(id):
     form.abstract.data = content.abstract
     form.category.data = content.category
     form.pub_time.data = content.pub_time
-
-
     return render_template('post-article.html', form=form)
 
 
@@ -104,13 +94,17 @@ def delete(id):
     db.session.delete(content)
     db.session.commit()
     flash('已删除该文章')
-    return redirect(url_for('index'))
+    return redirect(url_for('admin.html'))
 
 @main.route('/article/<int:id>')
 def article(id):
     content = Content.query.get_or_404(id)
     return render_template('article.html', content=content)
 
+@main.route('/category/<xxx>')
+def category(xxx):
+    categorys = Content.query.fliter_by(category=xxx).all()
+    return render_template('category.html', categorys=categorys)
 
 @main.route('/admin.html', methods=['GET', 'POST'])
 @login_required
