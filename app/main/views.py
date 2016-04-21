@@ -2,7 +2,7 @@
 from . import main
 from .. import db
 from flask import render_template, redirect, url_for, abort, flash, request,current_app
-from flask.ext.login import login_required, current_user
+from flask.ext.login import login_required, login_user, current_user
 from .forms import LoginForm, RegisterForm, PostArticle
 from ..models import Content, User
 import markdown2
@@ -29,8 +29,8 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user is not None and user.verify_password(form.password.data):
-            login_user(user, form.remember_me.data)
-            return redirect(request.args.get('next') or url_for('index'))
+            login_user(user)
+            return redirect(request.args.get('next') or url_for('main.index'))
         else:
             flash('邮箱或者密码不正确')
         #flash('电子邮箱或密码不正确')
@@ -103,8 +103,12 @@ def article(id):
 
 @main.route('/category/<name>')
 def category(name):
-    categorys = Content.query.filter_by(category=name).all()
-    return render_template('category.html', categorys=categorys,)
+    page = request.args.get('page', 1, type=int)
+    pagination = Content.query.filter_by(category=name).order_by(Content.pub_time.desc()).paginate(
+        page, per_page=10, error_out=False)
+    contents = pagination.items
+    num = Content.query.filter_by(category=name).count()
+    return render_template('category.html', pagination=pagination,contents=contents, num=num)
 
 @main.route('/admin.html', methods=['GET', 'POST'])
 @login_required

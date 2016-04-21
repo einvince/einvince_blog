@@ -48,6 +48,7 @@
         #foot-mar{
            margin-bottom: 100px;
        }
+
     </style>
 {{ pagedown.html_head() }}
 {% endblock %}
@@ -71,6 +72,7 @@
             {% endif %}
             <span class="glyphicon glyphicon-tags"></span> &nbsp;&nbsp;
             <span class="label label-default">{{ content.category }}</span>
+
             <hr>
         </li>
         {% endfor %}
@@ -80,7 +82,7 @@
     {% for content in contents %}
         <div id="ca_ca">
         <span id="category" class="glyphicon glyphicon-tags"></span>
-        <li style="list-style-type:none;">&nbsp;&nbsp{{ content.category }}</li>
+        <li style="list-style-type:none;">&nbsp;&nbsp<a href="{{ url_for('main.category',name=content.category) }}">{{ content.category }}</a></li>
         </div>
      {% endfor %}
     </div>

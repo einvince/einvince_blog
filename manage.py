@@ -24,7 +24,9 @@ manager.add_command('db', MigrateCommand)
 
 if __name__ == '__main__':
 
+    app.run(debug=True)
     server = Server(app.wsgi_app)
     server.serve(  )
-    manager.run()
+#    manage.run()
+
 

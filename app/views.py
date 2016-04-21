@@ -55,7 +55,7 @@ def post_article():
                           body=form.body.data,
                           category=form.category.data,
                           abstract=form.abstract.data,
-                          pub_time=form.pub_time.data,))
+                          pub_time=form.pub_time.data,)
         db.session.add(content)
         db.session.commit()
         return redirect(url_for('.index'))
