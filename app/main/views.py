@@ -5,8 +5,6 @@ from flask import render_template, redirect, url_for, abort, flash, request,curr
 from flask.ext.login import login_required, login_user, current_user
 from .forms import LoginForm, RegisterForm, PostArticle
 from ..models import Content, User
-import markdown2
-from misaka import Markdown, HtmlRenderer
 
 # 定义路由
 @main.route('/', methods=['GET', 'POST'])
