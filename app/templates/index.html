@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% from "macro.html" import pagination_widget, navbar  with context %}
+{% block title %}首页{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+        {% include "snipple/footer.css" %}
+
+        .label-default{
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            color: #333;
+        }
+        #artic_text {
+
+    }
+        #content_li{
+        padding: 20px;
+        margin-top: 10px;
+        background: white;
+        border-radius: 1px 1px ;
+        box-shadow:5px 5px 20px #CCC;
+    }
+
+        #content_li a:hover{
+            text-decoration: none
+        }
+
+        #tag{
+        margin-top: 10px;
+        padding: 20px;
+        background: white;
+        border-radius: 1px 1px ;
+        box-shadow:5px 5px 20px #CCC;
+    }
+        #tag li{
+        margin: 10px auto;
+    }
+    </style>
+{{ pagedown.html_head() }}
+{% endblock %}
+<!--navbar-->
+{% block nav %}
+    {{ navbar() }}
+{% endblock %}
+<!--content-->
+{% block content %}
+<div>
+    <div class='container' style="margin-top:20px;">
+    <div class='col-md-8'>
+    <ul style="list-style-type: none;">
+        {% for content in contents %}
+        <li class="post" id="content_li">
+            <a href="{{ url_for('main.article', id=content.id )}}"><h3>{{ content.title }}</h3></a>
+            <p id="time"><span class="glyphicon glyphicon-calendar"></span>
+                       <span style="color:#8C8C8C;">{{  content.pub_time.strftime('%Y %m %d') }}</span>
+            </p>
+            {% if content.abstract %}
+            <div id="post-alert">{{ content.abstract }}</div>
+            {% endif %}
+                 <p>
+                     <a href="/category/{{ content.category.tag }}"><span class="label label-default "><span class="glyphicon glyphicon-leaf"></span> {{ content.category.tag }}</span></a>
+                     <a href="/article/{{ content.id }}" style="float:right"><button class="btn btn-info"><span class="glyphicon glyphicon-fireglyphicon "></span>  了解更多</button></a>
+                 </p>
+        </li>
+        {% endfor %}
+    </ul>
+            <div style="text-align: center">
+                {{ pagination_widget(pagination, 'main.index') }}
+        </div>
+    </div>
+
+        <div class='col-md-1'></div>
+
+    <div class='col-md-3' id="tag">
+    {% for category in categorys %}
+        <p>
+        <li style="list-style-type:none;"><a href="{{ url_for('main.category',tag=category.tag) }}">>{{ category.tag|upper }}<span class="badge text-right" style="float:right">{{ category.count }}</span></a></li>
+        </p>
+     {% endfor %}
+    </div>
+    </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+{% block footer %}
+{% include "snipple/footer.html" %}
+{% endblock %}

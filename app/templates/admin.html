@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% from "macro.html" import navbar with context %}
+{% block head %}
+    {{ super() }}
+    <style>
+        #title{
+            font-size: 20px;
+        }
+        #delete{
+            float: right;
+        }
+    </style>
+{% endblock %}
+{% block nav %}
+    {{ navbar('admin') }}
+{% endblock %}
+{% block content %}
+{% if current_user.is_authenticated %}
+<div id="post" class="container">
+    <ul>
+        {% for content in contents %}
+        <li style="list-style-type: none">
+            <a href ="{{ url_for('main.edit', id=content.id )}}"><span id="title">{{ content.title }}</span></a>
+            <a href="{{ url_for('main.delete', id=content.id) }}"><span id="delete" class="label label-primary">删除</span></a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% endblock %}

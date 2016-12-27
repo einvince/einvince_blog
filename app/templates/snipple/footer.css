@@ -1,0 +1,28 @@
+#footer{
+    font-size: 16px;
+    height: 60px;
+    line-height: 60px;
+    background-color: #f5f5f5;
+    padding-left: 100px;
+    padding-right: 100px;
+    width: 100%;
+}
+#fix_down{
+    float:bottom;
+    bottom:0px;
+}
+#social{
+    font-size: 20px;
+    float: right;
+}
+#social a{
+    color: #000000;
+}
+#social a:hover{
+    color: #265a88;
+}
+#name{
+    line-height: 60px;
+    font-size:12;
+    color: #2b669a;
+}
