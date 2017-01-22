@@ -7,79 +7,43 @@
     {{ super() }}
     <style>
         {% include "snipple/footer.css" %}
-        a{
-        }
-        #title{
-            line-height: 35px;
-        }
-        .post{
-            list-style-type: none;
-            background: white;
-            padding: 15px;
-        }
-        .post-body{
-            font-weight: normal;
-            font-size: 16px;
-        }
-        .post a:hover{
-         text-decoration: none
-        }
-        .label-default{
-            background-color: #ffffff;
-            border: 1px solid #ddd;
-            color: #333;
-        }
-        #pub_time{
-            margin-top: 5px;
-        }
     </style>
 {% endblock %}
 {% block nav %}
     {{ navbar() }}
 {% endblock %}
 {% block content %}
-    <div class='container'>
-    <div class='row'>
-    <div class='col-md-2'></div>
-    <div class='col-md-8'>
-    <ul class="posts">
-        <li class="post">
-            <div class="head">
-                <a href="{{ url_for('main.article', id=content.id)}}"><h2 id="title">{{ content.title }}</h2></a>
-                <div id="pub_time">{{ content.pub_time.strftime('%Y %m %d') }}</div>
-            </div>
-            <hr>
-            <div class="post-body">
-                    {{ content.body | safe| markdown }}
-            </div>
-            <span class="glyphicon glyphicon-tags"></span> &nbsp;&nbsp;
-            <span class="label label-default"><a>{{ content.category.tag }}</a></span>
-        </li>
-    </ul>
-    <hr>
+<div class='container' style="margin-top:10px;min-height:900px">
+    <div id='content' style="width:700px;margin:20px auto;">
+        <div class="head">
+            <a href="{{ url_for('main.article', id=content.id)}}"><h2>{{ content.title }}</h2></a>
+            <p id="time" style="margin-top:20px;margin-bottom:0;"><span class="glyphicon glyphicon-calendar"></span>
+                <span style="color:#8C8C8C;">{{  content.pub_time.strftime('%Y %m %d') }}</span>
+            </p>
+        </div>
+        <hr>
+        <div>
+            {{ content.body | safe }}
+        </div>
 
-    <!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="{{ content.id }}" data-title="{{ content.title }}" data-url="url_for(main.artice)+'/'+{{ content.id }}"></div>
-<!-- 多说评论框 end -->
-<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-<script type="text/javascript">
-var duoshuoQuery = {short_name:"einvince"};
-	(function() {
-		var ds = document.createElement('script');
-		ds.type = 'text/javascript';ds.async = true;
-		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-		ds.charset = 'UTF-8';
-		(document.getElementsByTagName('head')[0]
-		 || document.getElementsByTagName('body')[0]).appendChild(ds);
-	})();
-	</script>
+        <!-- 多说评论框 start -->
+        <div class="ds-thread" data-thread-key="{{ content.id }}" data-title="{{ content.title }}" data-url="url_for(main.artice)+'/'+{{ content.id }}"></div>
+        <script type="text/javascript"  defer="defer">
+            var duoshuoQuery = {
+                short_name: "einvince"
+            };
+            (function() {
+                var ds = document.createElement('script');
+                ds.type = 'text/javascript';
+                ds.async = true;
+                ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+                ds.charset = 'UTF-8';
+                (document.getElementsByTagName('head')[0] ||
+                    document.getElementsByTagName('body')[0]).appendChild(ds);
+            })();
+        </script>
     </div>
-    <div class='col-md-2'></div>
-    </div>
-    </div>
-
-
-
+</div>
 {% endblock %}
 
 

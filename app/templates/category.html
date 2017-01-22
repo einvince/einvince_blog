@@ -5,88 +5,38 @@
     {{ super() }}
     <style type="text/css">
         {% include "snipple/footer.css" %}
-        a{
-        }
-        .post-body{
-            margin-bottom: 20px;
-        }
-        .head{
-        }
-        #title{
-            font-size: 30px;
-            font-weight: bold;
-            line-height: 35px;
-        }
-        #pub-time{
-            font-size: 15px;
-            font-weight: lighter;
-            float: right;
-            line-height: 35px;
-        }
-        .post{
-            list-style-type: none;
-        }
-        #abstract{
-            font-size: medium;
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
-        .label-default{
-            background-color: #ffffff;
-            border: 1px solid #ddd;
-            color: #333;
-        }
-        .pagination{
-            margin-top: 0;
-        }
-       #category{
-           float: left;
-       }
-        #ca_ca{
-           margin: 10px;
-       }
-        #foot-mar{
-           margin-bottom: 100px;
-       }
     </style>
 {{ pagedown.html_head() }}
 {% endblock %}
-<!--navbar-->
 {% block nav %}
     {{ navbar() }}
 {% endblock %}
-<!--content-->
 {% block content %}
-<div class="container" >
-    <div class='row'>
-    <div class='col-md-3'></div>
+<div class="container" style="margin-top:20px;min-height:900px">
+    <div class='col-md-2'></div>
     <div class='col-md-6'>
-    <ul class="posts">
         {% for content in contents %}
-        <li class="post">
+        <div id="content">
             <a href="{{ url_for('main.article', id=content.id )}}"><h3>{{ content.title }}</h3></a>
-            {{ content.pub_time.strftime('%Y %m %d') }}
+            <p id="time"><span class="glyphicon glyphicon-calendar"></span>
+                <span style="color:#8C8C8C;">{{  content.pub_time.strftime('%Y %m %d') }}</span>
+            </p>
             {% if content.abstract %}
-            <div id="abstract">{{ content.abstract }}</div>
+            <div id="post-alert">{{ content.abstract }}</div>
             {% endif %}
-            <span class="glyphicon glyphicon-tags"></span> &nbsp;&nbsp;
-            <span class="label label-default">{{ content.category.tag }}</span>
-            <hr>
-        </li>
-        {% endfor %}
-    </ul>
+            <div id= 'category'>
+                <a href="/category/{{ content.category.tag }}"><span class="label label-default "><span class="glyphicon glyphicon-leaf"></span> {{ content.category.tag }}</span></a>
+                <a href="/article/{{ content.id }}" style="float:right"><button class="btn btn-info"><span class="glyphicon glyphicon-fireglyphicon "></span>  了解更多</button></a>
+            </p>
+         </div>
+            {% endfor %}
     </div>
-    <div class='col-md-3'>
-        <div id="ca_ca">
-        <span id="category" class="glyphicon glyphicon-tags"></span>
-        <li style="list-style-type:none;">&nbsp;&nbsp{{tagname}}</li>
-        </div>
-    </div>
+    <div class='col-md-3' id='tag'>
+        <p>
+            <li style="list-style-type:none;"><a href="{{ url_for('main.category',tag=category.tag) }}">>{{ category.tag|upper }}<span class="badge text-right" style="float:right;background-color:#0DB8B1;">{{ category.count }}</span></a></li>
+        </p>
     </div>
 </div>
-
-
-
 {% endblock %}
 
 

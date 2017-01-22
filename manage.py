@@ -10,7 +10,11 @@ from flask.ext.script import Manager , Shell
 from flask.ext.migrate import Migrate, MigrateCommand
 from app.models import Content,User
 
+
+
 app = create_app()
+
+
 manager = Manager(app)
 migrate = Migrate(app, db)
 

@@ -9,10 +9,9 @@ from ..models import Content, User ,Category
 # 定义路由
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    print('index')
     page = request.args.get('page', 1, type=int)
     pagination = Content.query.order_by(Content.pub_time.desc()).paginate(
-        page, per_page=10, error_out=False)
+        page, per_page=5, error_out=False)
     contents = pagination.items
     categorys=Category.query.order_by(Category.count)[::-1]
     return render_template('index.html', contents=contents, pagination=pagination,categorys=categorys)
@@ -54,7 +53,6 @@ def post_article():
             category=Category(tag=form.category.data,count=1)
         else:
             category.count=int(category.count)+1
-
         content = Content(title=form.title.data,
                           body=form.body.data,
                           abstract=form.abstract.data,
@@ -97,6 +95,10 @@ def delete(id):
     if content is None:
         flash('文章不存在')
         return redirect(url_for('main.index'))
+    category=Category.query.filter_by(id=content.category_id).first()
+    category.count-=1
+    if category.count<=0:
+        db.session.delete(category)
     db.session.delete(content)
     db.session.commit()
     flash('已删除该文章')
@@ -112,7 +114,7 @@ def category(tag):
     tagname=tag
     category=Category.query.filter_by(tag=tag).first()
     contents=category.contents
-    return render_template("category.html",contents=contents,tagname=tagname)
+    return render_template("category.html",contents=contents,tagname=tagname,category=category)
 
 
 
@@ -122,14 +124,6 @@ def category(tag):
 def admin():
     contents = Content.query.order_by(Content.pub_time.desc()).all()
     return render_template('admin.html', contents=contents)
-
-@main.route('/resume')
-def resume():
-    return send_from_directory("static", "resume.pdf")
-
-@main.route('/search/<keyword>', methods=['GET'])
-def search(keyword):
-    return redirect('http://www.google.com/search?q=site:' + config.site_url + ' ' + keyword)
 
 
 '''
