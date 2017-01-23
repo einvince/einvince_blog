@@ -12,7 +12,7 @@
     {{ navbar() }}
 {% endblock %}
 {% block content %}
-    <div class='container' style="margin-top:10px;min-height:900px">
+    <div class='container' style="margin-top:10px;min-height:800px">
       <div class='col-md-2'></div>
         <div class='col-md-6'>
                 {% for content in contents %}
@@ -38,7 +38,7 @@
         <div class='col-md-3' id="tag">
             {% for category in categorys %}
             <p>
-                <li style="list-style-type:none;"><a href="{{ url_for('main.category',tag=category.tag) }}">>{{ category.tag|upper }}<span class="badge text-right" style="float:right;background-color:#0DB8B1;">{{ category.count }}</span></a></li>
+                <li style="list-style-type:none;"><a href="{{ url_for('main.category',tag=category.tag) }}">>{{ category.tag }}<span class="badge text-right" style="float:right;background-color:#0DB8B1;">{{ category.count }}</span></a></li>
             </p>
             {% endfor %}
         </div>

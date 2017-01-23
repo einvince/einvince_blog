@@ -2,8 +2,6 @@
 from . import db , login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask.ext.login import UserMixin
-import markdown2
-import bleach
 
 
 class Content(db.Model):
@@ -17,12 +15,6 @@ class Content(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey('categorys.id'))
     def __repr__(self):
         return "<Content %r>" % self.title
-    @staticmethod
-    def on_changed_body(target, value, oldvalue, initiator):
-            allowed_tags = ['a', 'abbr', 'acronym', 'b', 'code', 'blockquote','em', 'i','strong','li','ol','pre','strong','ul','h1','h2','h3','p']
-            target.body_html = bleach.linkify(bleach.clean(markdown2.markdown(value),tags=allowed_tags, strip=True))
-
-db.event.listen(Content.body, 'set', Content.on_changed_body)
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'

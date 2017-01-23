@@ -12,7 +12,7 @@
     {{ navbar() }}
 {% endblock %}
 {% block content %}
-<div class="container" style="margin-top:20px;min-height:900px">
+<div class="container" style="margin-top:20px;min-height:800px">
     <div class='col-md-2'></div>
     <div class='col-md-6'>
         {% for content in contents %}
@@ -27,7 +27,7 @@
             <div id= 'category'>
                 <a href="/category/{{ content.category.tag }}"><span class="label label-default "><span class="glyphicon glyphicon-leaf"></span> {{ content.category.tag }}</span></a>
                 <a href="/article/{{ content.id }}" style="float:right"><button class="btn btn-info"><span class="glyphicon glyphicon-fireglyphicon "></span>  了解更多</button></a>
-            </p>
+            </div>
          </div>
             {% endfor %}
     </div>

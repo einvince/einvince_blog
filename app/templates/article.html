@@ -2,7 +2,8 @@
 {% from "macro.html" import navbar with context %}
 {% block title %}文章 {% endblock %}
 {% block head %}
-<link rel="stylesheet" href="http://7xjm5v.com1.z0.glb.clouddn.com/@/font-awesome-4.3.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="http://7xjm5v.com1.z0.glb.clouddn.com/@/font-awesome-4.3.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="http://ok7l8yp8q.bkt.clouddn.com/default.css">
 {{ pagedown.html_head() }}
     {{ super() }}
     <style>
@@ -13,7 +14,7 @@
     {{ navbar() }}
 {% endblock %}
 {% block content %}
-<div class='container' style="margin-top:10px;min-height:900px">
+<div class='container' style="margin-top:10px;min-height:800px">
     <div id='content' style="width:700px;margin:20px auto;">
         <div class="head">
             <a href="{{ url_for('main.article', id=content.id)}}"><h2>{{ content.title }}</h2></a>
@@ -28,6 +29,10 @@
 
         <!-- 多说评论框 start -->
         <div class="ds-thread" data-thread-key="{{ content.id }}" data-title="{{ content.title }}" data-url="url_for(main.artice)+'/'+{{ content.id }}"></div>
+    </div>
+</div>
+
+
         <script type="text/javascript"  defer="defer">
             var duoshuoQuery = {
                 short_name: "einvince"
@@ -42,12 +47,11 @@
                     document.getElementsByTagName('body')[0]).appendChild(ds);
             })();
         </script>
-    </div>
-</div>
+
 {% endblock %}
-
-
 
 {% block footer %}
 {% include "snipple/footer.html" %}
+<script> hljs.initHighlightingOnLoad(); </script>
+<script type="text/javascript" src="http://ok7l8yp8q.bkt.clouddn.com/highlight.js"</script>
 {% endblock %}

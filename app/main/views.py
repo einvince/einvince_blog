@@ -13,7 +13,7 @@ def index():
     pagination = Content.query.order_by(Content.pub_time.desc()).paginate(
         page, per_page=5, error_out=False)
     contents = pagination.items
-    categorys=Category.query.order_by(Category.count)[::-1]
+    categorys=Category.query.order_by(Category.count)
     return render_template('index.html', contents=contents, pagination=pagination,categorys=categorys)
 
 
@@ -56,11 +56,11 @@ def post_article():
         content = Content(title=form.title.data,
                           body=form.body.data,
                           abstract=form.abstract.data,
-                          pub_time=form.pub_time.data,)
+                          pub_time=form.pub_time.data,category=category)
         db.session.add(category)
         db.session.add(content)
         db.session.commit()
-        return redirect(url_for('.index'))
+        return redirect(url_for('main.index'))
     return render_template('post-article.html', form=form)
 
 
@@ -72,18 +72,19 @@ def edit(id):
     content = Content.query.get_or_404(id)
     form = PostArticle()
     if form.validate_on_submit():
+        category=Category.query.filter_by(tag=form.category.data).first()
         content.title = form.title.data
         content.body = form.body.data
         content.abstract = form.abstract.data
-        content.category = form.category.data
+        content.category = category
         content.pub_time = form.pub_time.data
         db.session.commit()
         flash('你已经更新')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.admin'))
     form.body.data = content.body
     form.title.data = content.title
     form.abstract.data = content.abstract
-    form.category.data = content.category
+    form.category.data = content.category.tag
     form.pub_time.data = content.pub_time
     return render_template('post-article.html', form=form)
 
@@ -95,10 +96,6 @@ def delete(id):
     if content is None:
         flash('文章不存在')
         return redirect(url_for('main.index'))
-    category=Category.query.filter_by(id=content.category_id).first()
-    category.count-=1
-    if category.count<=0:
-        db.session.delete(category)
     db.session.delete(content)
     db.session.commit()
     flash('已删除该文章')
