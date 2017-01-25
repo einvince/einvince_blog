@@ -28,7 +28,7 @@ def login():
             login_user(user)
             return redirect(url_for('main.index'))
         else:
-             flash('error')
+            flash('error')
     return render_template('login.html',form=form)
         
 
