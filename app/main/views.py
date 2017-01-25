@@ -6,7 +6,6 @@ from flask.ext.login import login_required, login_user, logout_user
 from .forms import LoginForm, PostArticle
 from ..models import Content, User ,Category
 
-# 定义路由
 @main.route('/', methods=['GET', 'POST'])
 def index():
     page = request.args.get('page', 1, type=int)
@@ -121,9 +120,3 @@ def admin():
     contents = Content.query.order_by(Content.pub_time.desc()).all()
     return render_template('admin.html', contents=contents)
 
-
-'''
-@main.route('/resume')
-def resume():
-    return render_template('resume.html')
-'''
