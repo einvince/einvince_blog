@@ -19,19 +19,26 @@ def index():
 
 @main.route('/login', methods=['GET', 'POST'])
 def login():
-    form = LoginForm()
-    email = None
-    password = None
-    remember_me = None
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user is not None and user.verify_password(form.password.data):
-            login_user(user)
-            return redirect(request.args.get('next') or url_for('main.index'))
-        else:
-            flash('error')
-    form.email.data = ''
-    return render_template('login.html', form=form, email=email, password=password, remember_me=remember_me)
+    print("in----")
+    with open("bug.txt","a+") as f:
+        try:
+            form = LoginForm()
+            email = None
+            password = None
+            remember_me = None
+            if form.validate_on_submit():
+                user = User.query.filter_by(email=form.email.data).first()
+                if user is not None and user.verify_password(form.password.data):
+                    login_user(user)
+                    return redirect(request.args.get('next') or url_for('main.index'))
+                else:
+                    flash('error')
+            form.email.data = ''
+            return render_template('login.html', form=form, email=email, password=password, remember_me=remember_me)
+            # raise Exception('spam', 'eggs')
+        except Exception as e:
+            f.write(str(e)+'\n')
+        
 
 
 @main.route('/logout', methods=['GET', 'POST'])
